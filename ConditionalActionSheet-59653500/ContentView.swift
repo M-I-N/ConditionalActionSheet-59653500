@@ -9,8 +9,36 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isActionSheetPresented = false
+
     var body: some View {
-        Text("Hello, World!")
+        VStack {
+            Text("Hello, World!")
+            Button(action: {
+                self.isActionSheetPresented = true
+            }) {
+                Text("Show Action Sheet")
+            }
+        }
+        .modifier(Sheet(presented: $isActionSheetPresented))
+    }
+}
+
+struct Sheet: ViewModifier {
+    @Binding var presented: Bool
+
+    func body(content: Content) -> some View {
+        #if os(OSX)
+        return content
+        #else
+        return content
+            .actionSheet(isPresented: $presented) {
+                ActionSheet(title: Text("Action Title"),
+                            message: Text("Action Message"),
+                            buttons: [.cancel(), .default(Text("Ok"))]
+                )
+        }
+        #endif
     }
 }
 
